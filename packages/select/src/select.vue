@@ -113,12 +113,21 @@
           view-class="el-select-dropdown__list"
           ref="scrollbar"
           :class="{ 'is-empty': !allowCreate && query && filteredOptionsCount === 0 }"
-          v-show="options.length > 0 && !loading">
+          v-show="(options.length > 0 && !loading) || otherOptions.length > 0">
           <el-option
             :value="query"
             created
             v-if="showNewOption">
           </el-option>
+          <template v-if="otherOptions.length > 0">
+            <el-option v-for="item in otherOptions"
+              :value="item.value"
+              :key="item.key"
+              :label="item.label"
+              created
+              >
+            </el-option>
+          </template>
           <slot></slot>
         </el-scrollbar>
         <template v-if="emptyText && (!allowCreate || loading || (allowCreate && options.length === 0 ))">
@@ -307,6 +316,8 @@
     data() {
       return {
         options: [],
+        // 二次开发
+        otherOptions: [],
         cachedOptions: [],
         createdLabel: null,
         createdSelected: false,
@@ -753,6 +764,9 @@
         }
       },
 
+      setOptions(datas) {
+        this.otherOptions = datas
+      },
       deleteSelected(event) {
         event.stopPropagation();
         const value = this.multiple ? [] : '';
